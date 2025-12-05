@@ -21,6 +21,11 @@ Source: https://github.com/MicrosoftResearch/Azimuth/tree/master/azimuth/data
 The Azimuth datasets are redistributed under the original Azimuth license (included in this repository's data folder as `AZIMUTH_LICENSE`).
 
 
+This project also uses the publicly available **Wang et al** datasets:
+
+Source: https://pmc.ncbi.nlm.nih.gov/articles/PMC3972032/#SD2
+
+
 ## Repository Structure
 
 ForeCas9/
