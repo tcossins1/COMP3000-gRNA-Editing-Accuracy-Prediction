@@ -13,8 +13,8 @@ ForeCas9 is a machine learning project designed to predict CRISPR-Cas9 gRNA cutt
 
 This project uses the publicly available **Azimuth** datasets released by Microsoft Research:
 
-- **Azimuth V1** (V1_data.xlsx)  
-- **Azimuth V2** (V2_data.xlsx)  
+- **Azimuth V1** (v1_data.xlsx)  
+- **Azimuth V2** (v2_data.xlsx)  
 
 Source: https://github.com/MicrosoftResearch/Azimuth/tree/master/azimuth/data
 

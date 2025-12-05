@@ -1,10 +1,10 @@
-# Preprocessing the dataset 'V1_data.xlsx'
+# Preprocessing the dataset 'v1_data.xlsx'
 
 import pandas as pd
 from pathlib import Path
 
 def load_raw_v1():
-    raw_path = Path("data/raw/V1_data.xlsx")
+    raw_path = Path("data/raw/v1_data.xlsx")
     df = pd.read_excel(raw_path)
     return df
 
