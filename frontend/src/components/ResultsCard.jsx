@@ -1,4 +1,5 @@
 import React from "react";
+import FeatureBreakdown from "./FeatureBreakdown";
 
 export default function ResultsCard({ result, history, fallbackGc }) {
   return (
@@ -27,15 +28,16 @@ export default function ResultsCard({ result, history, fallbackGc }) {
 
           <div className="resultCards">
             <div className="miniCard">
-              <div className="k">Features used</div>
-              <div className="v">{(result.features?.gc_content ?? fallbackGc).toFixed(2)} GC</div>
-              <div className="mutedSmall">Baseline uses GC only</div>
+              <div className="k">Sequence</div>
+              <div className="v2" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
+                {result.sequence}
+              </div>
+              <div className="mutedSmall">20-nt guide</div>
             </div>
-            <div className="miniCard">
-              <div className="k">Model</div>
-              <div className="v">{result.model}</div>
-              <div className="mutedSmall">Linear regression</div>
-            </div>
+          </div>
+
+          <div style={{ marginTop: 10 }}>
+            <FeatureBreakdown features={result.features} fallbackGc={fallbackGc} />
           </div>
 
           <div className="divider" />
@@ -54,10 +56,6 @@ export default function ResultsCard({ result, history, fallbackGc }) {
                 <span className="score">{h.prediction.toFixed(4)}</span>
               </div>
             ))}
-          </div>
-
-          <div className="mutedSmall" style={{ marginTop: 10 }}>
-            Next upgrade: replace “Low/Medium/High” with dataset percentiles + add richer sequence features.
           </div>
         </>
       )}

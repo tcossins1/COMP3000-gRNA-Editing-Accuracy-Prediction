@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 # Must match training feature order
-FEATURE_COLUMNS = ["gc_content"]
+FEATURE_COLUMNS = ["gc_content", "gc_1_10", "gc_11_20", "has_poly_t4", "max_homopolymer"]
 
 # Load model once on startup
 predictor = EfficiencyPredictor(MODEL_PATH, feature_columns=FEATURE_COLUMNS)

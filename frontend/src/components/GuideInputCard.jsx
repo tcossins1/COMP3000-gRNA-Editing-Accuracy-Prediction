@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { validateSequence, normalize, gcContent, composition } from "../utils/sequence";
+import { validateSequence, normalize } from "../utils/sequence";
 
 export default function GuideInputCard({
   sequence,
@@ -10,8 +10,6 @@ export default function GuideInputCard({
 }) {
   const v = useMemo(() => validateSequence(sequence), [sequence]);
   const seqNorm = v.ok ? v.seq : normalize(sequence);
-  const gc = useMemo(() => (seqNorm.length ? gcContent(seqNorm) : 0), [seqNorm]);
-  const comp = useMemo(() => composition(seqNorm), [seqNorm]);
 
   return (
     <section className="card">
@@ -35,22 +33,6 @@ export default function GuideInputCard({
 
       {!v.ok && sequence.trim() && <div className="hint bad">{v.msg}</div>}
       {v.ok && <div className="hint good">Looks valid ✓</div>}
-
-      <div className="meter">
-        <div className="meterTop">
-          <div className="k">GC content</div>
-          <div className="v">{gc.toFixed(2)}</div>
-        </div>
-        <div className="bar">
-          <div className="fill" style={{ width: `${Math.round(gc * 100)}%` }} />
-        </div>
-        <div className="miniRow">
-          <span>A: {comp.A}</span>
-          <span>T: {comp.T}</span>
-          <span>G: {comp.G}</span>
-          <span>C: {comp.C}</span>
-        </div>
-      </div>
 
       <button className="primary" onClick={onPredict} disabled={!v.ok || loading}>
         {loading ? "Predicting…" : "Predict"}

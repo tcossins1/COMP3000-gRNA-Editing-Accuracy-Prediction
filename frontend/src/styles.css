@@ -139,17 +139,6 @@ h2{
 .hint.good{ color: #059669; }
 .hint.bad{ color: #b91c1c; }
 
-.meter{
-  margin-top: 14px;
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(229,231,235,0.9);
-}
-.meterTop{ display:flex; align-items:baseline; justify-content:space-between; }
-.k{ font-size: 12px; color: var(--muted); }
-.v{ font-size: 16px; font-weight: 800; }
-
 .bar{
   height: 10px;
   border-radius: 999px;
@@ -294,3 +283,34 @@ h2{
   justify-content:space-between;
   gap:10px;
 }
+
+/* Feature breakdown */
+.fbCard { margin-top: 6px; }
+
+.fbHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.fbChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:flex-end;
+}
+
+.fbGrid{
+  display:grid;
+  gap: 12px;
+}
+
+.fbRowTop{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom: 8px;
+}
+
+.fbBar{ margin-top: 0; }
