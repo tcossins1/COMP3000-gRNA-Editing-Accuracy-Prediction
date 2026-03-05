@@ -2,13 +2,11 @@ import React, { useMemo } from "react";
 import { validateSequence, normalize, gcContent, composition } from "../utils/sequence";
 
 export default function GuideInputCard({
-  examples,
   sequence,
   setSequence,
   onPredict,
   loading,
   error,
-  apiOnline,
 }) {
   const v = useMemo(() => validateSequence(sequence), [sequence]);
   const seqNorm = v.ok ? v.seq : normalize(sequence);
@@ -21,14 +19,6 @@ export default function GuideInputCard({
       <p className="muted">
         Enter a 20-nt guide (A/T/G/C).
       </p>
-
-      <div className="examples">
-        {examples.map((ex) => (
-          <button key={ex.label} className="chip" onClick={() => setSequence(ex.seq)} type="button">
-            {ex.label}
-          </button>
-        ))}
-      </div>
 
       <label className="label">20-nt gRNA sequence</label>
       <div className={`inputWrap ${v.ok ? "ok" : sequence.trim() ? "bad" : ""}`}>
@@ -67,15 +57,6 @@ export default function GuideInputCard({
       </button>
 
       {error && <div className="alert">{error}</div>}
-
-      <div className="divider" />
-
-      <div className="smallGrid">
-        <div>
-          <div className="k">Status</div>
-          <div className="v2">{apiOnline === true ? "Online" : apiOnline === false ? "Offline" : "Checking…"}</div>
-        </div>
-      </div>
     </section>
   );
 }

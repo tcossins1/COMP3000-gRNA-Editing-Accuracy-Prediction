@@ -102,7 +102,6 @@ h2{
 .muted{ color: var(--muted); margin: 0 0 12px; line-height: 1.5; }
 .mutedSmall{ color: var(--muted); font-size: 12px; }
 
-.examples{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px;}
 .chip{
   border: 1px solid var(--border);
   background: white;
