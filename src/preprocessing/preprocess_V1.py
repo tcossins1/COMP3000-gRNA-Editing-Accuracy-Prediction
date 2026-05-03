@@ -1,17 +1,23 @@
-# Preprocessing the dataset 'v1_data.xlsx'
+# Preprocessing the Azimuth V1 human dataset for model training
 
 import pandas as pd
 from pathlib import Path
 
-def load_raw_v1():
-    raw_path = Path("data/raw/v1_data.xlsx")
-    df = pd.read_excel(raw_path)
+RAW_PATH = Path("data/raw/v1_data.xlsx")
+PROCESSED_PATH = Path("data/processed/v1_cleaned.csv")
+SHEET_NAME = "Human"
+TARGET_COLUMN = "TF1 CD13"
+
+
+def load_raw_v1(sheet_name: str = SHEET_NAME) -> pd.DataFrame:
+    raw_path = RAW_PATH
+    df = pd.read_excel(raw_path, sheet_name=sheet_name)
     return df
 
-def clean_v1_dataset(df):
 
-    # Dropping unneeded columns
-    df = df.drop(columns=[
+def clean_v1_dataset(df: pd.DataFrame) -> pd.DataFrame:
+    # Keep the human Azimuth V1 sheet and only the TF1 CD13 target column
+    drop_columns = [
         "Target",
         "30mer",
         "Strand",
@@ -22,33 +28,34 @@ def clean_v1_dataset(df):
         "MOLM13 CD33",
         "NB4 CD33",
         "TF1 CD33",
-        "NB4 CD13"
-    ])
+        "NB4 CD13",
+    ]
+    df = df.drop(columns=[col for col in drop_columns if col in df.columns])
 
-    # Currently using Tf1 CD13 efficiency column
-    df = df.rename(columns={"TF1 CD13": "efficiency"})
+    if TARGET_COLUMN not in df.columns:
+        raise ValueError(f"Expected target column '{TARGET_COLUMN}' not found in Azimuth V1 Human sheet.")
 
-    # Rename needed columns to lower case for consistency
+    df = df.rename(columns={TARGET_COLUMN: "efficiency"})
     df.columns = df.columns.str.lower()
 
-    # Ensure only appropriate columns selected
     df = df[["sequence", "efficiency"]]
-
-    # Drop unsuitable rows
     df = df.dropna(subset=["sequence", "efficiency"])
-    df = df[df["sequence"].str.len() == 20]  # ensure valid gRNA length
+    df["sequence"] = df["sequence"].astype(str).str.strip().str.upper()
+    df = df[df["sequence"].str.len() == 20]
 
     return df
 
-def save_processed(df):
-    out_path = Path("data/processed/v1_cleaned.csv")
+
+def save_processed(df: pd.DataFrame, out_path: Path = PROCESSED_PATH) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out_path, index=False)
 
-def main():
+
+def main() -> None:
     df = load_raw_v1()
     df_clean = clean_v1_dataset(df)
     save_processed(df_clean)
+
 
 if __name__ == "__main__":
     main()
