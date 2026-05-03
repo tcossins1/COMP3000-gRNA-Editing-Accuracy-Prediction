@@ -1,5 +1,13 @@
 import pandas as pd
 
+FEATURE_COLUMNS = [
+    "gc_content",
+    "gc_1_10",
+    "gc_11_20",
+    "has_poly_t4",
+    "max_homopolymer",
+]
+
 def gc_content(seq: str) -> float:
     # Compute GC content of a nucleotide sequence
     seq = seq.upper()
@@ -54,11 +62,11 @@ def extract_features_from_dataset(df: pd.DataFrame) -> pd.DataFrame:
     features = df["sequence"].apply(extract_features_from_sequence).apply(pd.Series)
     return pd.concat([df, features], axis=1)
 
-def main():
-    # For executing file solo - remove upon production
+def main() -> None:
     df = pd.read_csv("data/processed/v1_cleaned.csv")
     df_features = extract_features_from_dataset(df)
     df_features.to_csv("data/processed/v1_features.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
