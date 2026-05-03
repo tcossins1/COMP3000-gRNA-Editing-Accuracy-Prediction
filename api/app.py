@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.config import MODEL_PATH, MODEL_NAME
+from src.feature_extraction.extract_features_v1 import FEATURE_COLUMNS
 from src.service.predictor import EfficiencyPredictor
 
 # --- Request/Response schemas ---
@@ -26,9 +27,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Must match training feature order
-FEATURE_COLUMNS = ["gc_content", "gc_1_10", "gc_11_20", "has_poly_t4", "max_homopolymer"]
 
 # Load model once on startup
 predictor = EfficiencyPredictor(MODEL_PATH, feature_columns=FEATURE_COLUMNS)
