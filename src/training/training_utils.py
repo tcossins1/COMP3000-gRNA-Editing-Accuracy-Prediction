@@ -15,6 +15,12 @@ from src.feature_extraction.extract_features_v1 import FEATURE_COLUMNS
 
 DATA_PATH = Path("data/processed/v1_features.csv")
 
+MODEL_TYPE_MAP = {
+    "linear": "linear_regression",
+    "rf": "random_forest",
+    "gb": "gradient_boosting",
+}
+
 
 def load_dataset(path: Path = DATA_PATH) -> pd.DataFrame:
     if not path.exists():
@@ -68,3 +74,37 @@ def tune_gradient_boosting(X_train: pd.DataFrame, y_train: pd.Series) -> Gradien
     grid_search.fit(X_train, y_train)
     print(f"Best GB params: {grid_search.best_params_}")
     return grid_search.best_estimator_
+
+
+def default_model_name(model_type: str, data_path: Path) -> str:
+    """Generate default model filename based on type and dataset."""
+    suffix = data_path.stem.replace("_features", "")
+    return f"{MODEL_TYPE_MAP[model_type]}_{suffix}.joblib"
+
+
+def build_model(model_type: str) -> Any:
+    """Build untrained model by type."""
+    if model_type == "linear":
+        return LinearRegression()
+    if model_type == "rf":
+        return RandomForestRegressor(random_state=42)
+    if model_type == "gb":
+        return GradientBoostingRegressor(random_state=42)
+    raise ValueError(f"Unsupported model type: {model_type}")
+
+
+def train_model(model_type: str, data_path: Path = DATA_PATH) -> tuple[Any, dict[str, float]]:
+    """Generic training function for any supported model type. Returns (model, metrics)."""
+    df = load_dataset(data_path)
+    X_train, X_test, y_train, y_test = split_dataset(df)
+
+    if model_type == "rf":
+        model = tune_random_forest(X_train, y_train)
+    elif model_type == "gb":
+        model = tune_gradient_boosting(X_train, y_train)
+    else:
+        model = build_model(model_type)
+        model.fit(X_train, y_train)
+
+    metrics = evaluate_model(model, X_test, y_test)
+    return model, metrics
