@@ -1,3 +1,6 @@
+import argparse
+from pathlib import Path
+
 import pandas as pd
 
 FEATURE_COLUMNS = [
@@ -109,10 +112,31 @@ def extract_features_from_dataset(df: pd.DataFrame) -> pd.DataFrame:
     features = df["sequence"].apply(extract_features_from_sequence).apply(pd.Series)
     return pd.concat([df, features], axis=1)
 
-def main() -> None:
-    df = pd.read_csv("data/processed/v1_cleaned.csv")
+def build_feature_dataset(input_path: str | Path = "data/processed/v1_cleaned.csv", output_path: str | Path = "data/processed/v1_features.csv") -> None:
+    df = pd.read_csv(input_path)
     df_features = extract_features_from_dataset(df)
-    df_features.to_csv("data/processed/v1_features.csv", index=False)
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+    df_features.to_csv(output_path, index=False)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Extract sequence features from a cleaned dataset")
+    parser.add_argument(
+        "--input-path",
+        default="data/processed/v1_cleaned.csv",
+        help="Path to the cleaned dataset CSV file",
+    )
+    parser.add_argument(
+        "--output-path",
+        default="data/processed/v1_features.csv",
+        help="Path to write the extracted feature CSV file",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    build_feature_dataset(args.input_path, args.output_path)
 
 
 if __name__ == "__main__":
