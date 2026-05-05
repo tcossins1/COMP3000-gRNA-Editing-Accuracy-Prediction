@@ -314,3 +314,46 @@ h2{
 }
 
 .fbBar{ margin-top: 0; }
+
+.fbNucComp{
+  margin-top: 10px;
+}
+
+.nucBars{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nucBar{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nucLabel{
+  font-weight: bold;
+  font-size: 12px;
+  width: 12px;
+  text-align: center;
+}
+
+.nucBarFill{
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(229,231,235,0.5);
+}
+
+.nucA .fill{ background: #ef4444; } /* red */
+.nucT .fill{ background: #3b82f6; } /* blue */
+.nucG .fill{ background: #10b981; } /* green */
+.nucC .fill{ background: #f59e0b; } /* orange */
+
+.nucCount{
+  font-size: 11px;
+  color: var(--muted);
+  width: 16px;
+  text-align: right;
+}
