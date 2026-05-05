@@ -1,3 +1,5 @@
+"""Feature extraction utilities for ForeCas9."""
+
 import argparse
 from pathlib import Path
 
@@ -9,7 +11,6 @@ FEATURE_COLUMNS = [
     "gc_11_20",
     "has_poly_t4",
     "max_homopolymer",
-    # New features
     "gc_ratio_1_10_vs_11_20",
     "a_count",
     "t_count",
@@ -29,30 +30,30 @@ FEATURE_COLUMNS = [
     "dinuc_ta",
 ]
 
+
 def gc_content(seq: str) -> float:
-    # Compute GC content of a nucleotide sequence
+    # fraction of G/C in sequence
     seq = seq.upper()
-    if not seq:
-        return 0.0
-    return (seq.count("G") + seq.count("C")) / len(seq)
+    return 0.0 if not seq else (seq.count("G") + seq.count("C")) / len(seq)
+
 
 def gc_window(seq: str, start: int, end: int) -> float:
-    """GC content in seq[start:end] (0-indexed, end exclusive)."""
-    seq = seq.upper()
-    window = seq[start:end]
-    if not window:
-        return 0.0
-    return (window.count("G") + window.count("C")) / len(window)
+    # GC content for a sub-window of the sequence
+    window = seq.upper()[start:end]
+    return 0.0 if not window else (window.count("G") + window.count("C")) / len(window)
+
 
 def has_poly_t4(seq: str) -> int:
-    """1 if the sequence contains 'TTTT', else 0."""
+    # 1 if sequence contains a TTTT run
     return 1 if "TTTT" in seq.upper() else 0
 
+
 def max_homopolymer(seq: str) -> int:
-    """Length of the longest run of the same nucleotide (e.g., AAAA -> 4)."""
+    # longest repeat of the same base
     seq = seq.upper()
     if not seq:
         return 0
+
     max_run = 1
     current_run = 1
     for i in range(1, len(seq)):
@@ -64,10 +65,10 @@ def max_homopolymer(seq: str) -> int:
             current_run = 1
     return max_run
 
+
 def extract_features_from_sequence(seq: str) -> dict:
-    # Extract model features from a single raw sequence
-    # Used for processing UI inputs
     seq = seq.upper()
+
     features = {
         "gc_content": gc_content(seq),
         "gc_1_10": gc_window(seq, 0, 10),
@@ -76,28 +77,24 @@ def extract_features_from_sequence(seq: str) -> dict:
         "max_homopolymer": max_homopolymer(seq),
     }
 
-    # New features
-    gc_1_10 = features["gc_1_10"]
-    gc_11_20 = features["gc_11_20"]
-    features["gc_ratio_1_10_vs_11_20"] = gc_1_10 / (gc_11_20 + 1e-6)  # avoid division by zero
-
+    # additional features
+    features["gc_ratio_1_10_vs_11_20"] = features["gc_1_10"] / (features["gc_11_20"] + 1e-6)
     features["a_count"] = seq.count("A")
     features["t_count"] = seq.count("T")
     features["g_count"] = seq.count("G")
     features["c_count"] = seq.count("C")
 
-    # Position-specific (1-indexed)
+    # 1-based position features
     features["position_1_a"] = 1 if seq[0] == "A" else 0
     features["position_1_t"] = 1 if seq[0] == "T" else 0
     features["position_1_g"] = 1 if seq[0] == "G" else 0
     features["position_1_c"] = 1 if seq[0] == "C" else 0
-
     features["position_20_a"] = 1 if seq[19] == "A" else 0
     features["position_20_t"] = 1 if seq[19] == "T" else 0
     features["position_20_g"] = 1 if seq[19] == "G" else 0
     features["position_20_c"] = 1 if seq[19] == "C" else 0
 
-    # Dinucleotide counts
+    # selected dinucleotide counts
     features["dinuc_ag"] = seq.count("AG")
     features["dinuc_ct"] = seq.count("CT")
     features["dinuc_gc"] = seq.count("GC")
@@ -105,12 +102,13 @@ def extract_features_from_sequence(seq: str) -> dict:
 
     return features
 
+
 def extract_features_from_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    # Apply feature extraction to preprocessed dataset
-    # Used for training models
+    # add feature columns to the cleaned dataset
     df = df.copy()
-    features = df["sequence"].apply(extract_features_from_sequence).apply(pd.Series)
-    return pd.concat([df, features], axis=1)
+    feature_df = df["sequence"].apply(extract_features_from_sequence).apply(pd.Series)
+    return pd.concat([df, feature_df], axis=1)
+
 
 def build_feature_dataset(input_path: str | Path = "data/processed/v1_cleaned.csv", output_path: str | Path = "data/processed/v1_features.csv") -> None:
     df = pd.read_csv(input_path)

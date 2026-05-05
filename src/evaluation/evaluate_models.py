@@ -1,3 +1,5 @@
+"""Evaluation module for saved ForeCas9 models"""
+
 from __future__ import annotations
 
 import argparse
@@ -21,7 +23,7 @@ MODEL_PATHS = {
 
 
 def evaluate_model(model: Any, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
-    """Evaluate model performance on test set."""
+    # compute regression metrics for one model
     preds = model.predict(X_test)
     mse = mean_squared_error(y_test, preds)
     return {
@@ -32,6 +34,7 @@ def evaluate_model(model: Any, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
 
 
 def load_model(path: Path) -> Any:
+    # load a saved model artifact
     if not path.exists():
         raise FileNotFoundError(f"Model not found: {path}")
     return joblib.load(path)
@@ -59,6 +62,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def evaluate_all(model_paths: list[str], data_path: Path = DATA_PATH, output_path: Path = RESULTS_PATH) -> pd.DataFrame:
+    # run evaluation on each model and save a result table
     df = load_dataset(data_path)
     _, X_test, _, y_test = split_dataset(df)
 
@@ -77,8 +81,7 @@ def evaluate_all(model_paths: list[str], data_path: Path = DATA_PATH, output_pat
 
 def main() -> None:
     args = parse_args()
-    model_paths = args.model_paths
-    results = evaluate_all(model_paths, Path(args.data_path), Path(args.output_path))
+    results = evaluate_all(args.model_paths, Path(args.data_path), Path(args.output_path))
     print("\nEvaluation complete. Results:")
     print(results.to_string(index=False))
 

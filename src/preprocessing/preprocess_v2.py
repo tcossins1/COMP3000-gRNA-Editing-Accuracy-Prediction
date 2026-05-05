@@ -1,3 +1,5 @@
+"""Preprocess Azimuth V2 data for model training"""
+
 import pandas as pd
 from pathlib import Path
 
@@ -10,12 +12,14 @@ TARGET_COLUMN = "sgRNA Score"
 
 
 def load_raw_v2(sheet_name: str = SHEET_NAME, header: int = HEADER_ROW) -> pd.DataFrame:
+    # load the raw Excel file with the V2 header row
     if not RAW_PATH.exists():
         raise FileNotFoundError(f"Azimuth V2 raw dataset not found: {RAW_PATH}")
     return pd.read_excel(RAW_PATH, sheet_name=sheet_name, header=header)
 
 
 def clean_v2_dataset(df: pd.DataFrame) -> pd.DataFrame:
+    # keep the sequence and score columns only
     missing_columns = [col for col in [SEQUENCE_COLUMN, TARGET_COLUMN] if col not in df.columns]
     if missing_columns:
         raise ValueError(f"Expected columns not found in Azimuth V2 sheet: {missing_columns}")
@@ -31,6 +35,7 @@ def clean_v2_dataset(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def save_processed(df: pd.DataFrame, out_path: Path = PROCESSED_PATH) -> None:
+    # write cleaned V2 data to disk
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out_path, index=False)
 
