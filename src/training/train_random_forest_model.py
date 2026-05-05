@@ -1,3 +1,5 @@
+"""Train and save a V1 random forest model"""
+
 from __future__ import annotations
 
 from pathlib import Path
