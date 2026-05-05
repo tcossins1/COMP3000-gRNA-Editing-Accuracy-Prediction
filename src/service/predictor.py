@@ -1,8 +1,10 @@
+"""Prediction service for ForeCas9"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 import joblib
 import pandas as pd
@@ -20,10 +22,7 @@ class PredictionResult:
 
 
 class EfficiencyPredictor:
-    """
-    Loads a trained sklearn model once and exposes predict(sequence).
-    """
-
+    # Load the trained model once at startup.
     def __init__(self, model_path: str | Path, feature_columns: list[str]):
         self.model_path = Path(model_path)
         if not self.model_path.exists():
@@ -37,10 +36,8 @@ class EfficiencyPredictor:
             raise ValueError("Sequence is required.")
 
         seq = seq.strip().upper()
-
         if len(seq) != 20:
             raise ValueError("Sequence must be exactly 20 nucleotides long.")
-
         if not set(seq).issubset(VALID_NTS):
             raise ValueError("Sequence must contain only A, T, G, C.")
 
@@ -55,6 +52,5 @@ class EfficiencyPredictor:
             columns=self.feature_columns,
         )
 
-        pred = float(self.model.predict(X)[0])
-
-        return PredictionResult(sequence=seq, prediction=pred, features=features)
+        prediction = float(self.model.predict(X)[0])
+        return PredictionResult(sequence=seq, prediction=prediction, features=features)

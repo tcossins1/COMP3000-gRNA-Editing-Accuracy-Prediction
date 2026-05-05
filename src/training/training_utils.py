@@ -1,3 +1,5 @@
+"""Shared training utilities for V1 models."""
+
 from __future__ import annotations
 
 from pathlib import Path

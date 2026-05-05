@@ -1,3 +1,5 @@
+"""Generic model training CLI for ForeCas9"""
+
 from __future__ import annotations
 
 import argparse
@@ -38,9 +40,10 @@ def main() -> None:
     output_path = Path(args.output_path) if args.output_path else MODEL_DIR / default_model_name(args.model_type, data_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # train the selected model and save the fitted estimator
     model, metrics = train_model_shared(args.model_type, data_path)
     save_model(model, output_path)
-    
+
     print(f"Trained model saved to: {output_path}")
     print("Evaluation metrics:")
     print(f"  MAE : {metrics['mae']:.4f}")

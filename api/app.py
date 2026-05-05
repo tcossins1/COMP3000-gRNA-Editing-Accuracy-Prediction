@@ -1,3 +1,5 @@
+"""API server for ForeCas9 predictions"""
+
 from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
@@ -8,32 +10,34 @@ from src.config import MODEL_PATH, MODEL_NAME
 from src.feature_extraction.extract_features_v1 import FEATURE_COLUMNS
 from src.service.predictor import EfficiencyPredictor
 
-# --- Request/Response schemas ---
+# request schema
 class PredictRequest(BaseModel):
     sequence: str
 
+# response schema
 class PredictResponse(BaseModel):
     sequence: str
     prediction: float
     features: dict
     model: str
 
-
 app = FastAPI(title="ForeCas9 API", version="1.0")
 
+# allow frontend access during development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TODO: dev only
+    allow_origins=["*"],  # dev only
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load model once on startup
+# load the model once on startup
 predictor = EfficiencyPredictor(MODEL_PATH, feature_columns=FEATURE_COLUMNS)
 
 
 @app.get("/health")
 def health():
+    # simple health check
     return {"status": "ok", "model": MODEL_NAME}
 
 
@@ -48,6 +52,8 @@ def predict(req: PredictRequest):
             "model": MODEL_NAME,
         }
     except ValueError as e:
+        # invalid input from user
         raise HTTPException(status_code=400, detail=str(e))
     except Exception:
+        # unexpected error
         raise HTTPException(status_code=500, detail="Internal server error")

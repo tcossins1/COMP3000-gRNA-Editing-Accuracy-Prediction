@@ -1,4 +1,4 @@
-# Preprocessing the Azimuth V1 human dataset for model training
+"""Preprocess Azimuth V1 data for model training"""
 
 import pandas as pd
 from pathlib import Path
@@ -10,13 +10,12 @@ TARGET_COLUMN = "TF1 CD13"
 
 
 def load_raw_v1(sheet_name: str = SHEET_NAME) -> pd.DataFrame:
-    raw_path = RAW_PATH
-    df = pd.read_excel(raw_path, sheet_name=sheet_name)
-    return df
+    # read the V1 Excel sheet for human data
+    return pd.read_excel(RAW_PATH, sheet_name=sheet_name)
 
 
 def clean_v1_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    # Keep the human Azimuth V1 sheet and only the TF1 CD13 target column
+    # drop columns that are not needed for training
     drop_columns = [
         "Target",
         "30mer",
@@ -35,6 +34,7 @@ def clean_v1_dataset(df: pd.DataFrame) -> pd.DataFrame:
     if TARGET_COLUMN not in df.columns:
         raise ValueError(f"Expected target column '{TARGET_COLUMN}' not found in Azimuth V1 Human sheet.")
 
+    # rename and normalize columns
     df = df.rename(columns={TARGET_COLUMN: "efficiency"})
     df.columns = df.columns.str.lower()
 
@@ -42,7 +42,6 @@ def clean_v1_dataset(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=["sequence", "efficiency"])
     df["sequence"] = df["sequence"].astype(str).str.strip().str.upper()
     df = df[df["sequence"].str.len() == 20]
-
     return df
 
 
