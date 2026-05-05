@@ -4,7 +4,6 @@ import argparse
 from pathlib import Path
 
 from src.training.training_utils import (
-    build_model,
     default_model_name,
     save_model,
     train_model as train_model_shared,

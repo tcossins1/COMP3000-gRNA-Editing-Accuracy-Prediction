@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.training.training_utils import evaluate_model, load_dataset, save_model, split_dataset, tune_gradient_boosting
+from src.evaluation.evaluate_models import evaluate_model
+from src.training.training_utils import load_dataset, save_model, split_dataset, tune_gradient_boosting
 
 MODEL_PATH = Path("models/gradient_boosting_v1.joblib")
 

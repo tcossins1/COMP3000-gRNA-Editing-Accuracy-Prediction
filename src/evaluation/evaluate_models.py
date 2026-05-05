@@ -5,14 +5,12 @@ from pathlib import Path
 from typing import Any
 
 import joblib
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
 
-from src.feature_extraction.extract_features_v1 import FEATURE_COLUMNS
+from src.training.training_utils import load_dataset, split_dataset, DATA_PATH
 
-DATA_PATH = Path("data/processed/v1_features.csv")
 MODEL_DIR = Path("models")
 RESULTS_PATH = Path("data/processed/model_results.csv")
 MODEL_PATHS = {
@@ -22,19 +20,8 @@ MODEL_PATHS = {
 }
 
 
-def load_dataset(path: Path = DATA_PATH) -> pd.DataFrame:
-    if not path.exists():
-        raise FileNotFoundError(f"Processed dataset not found: {path}")
-    return pd.read_csv(path)
-
-
-def split_dataset(df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42):
-    X = df[FEATURE_COLUMNS]
-    y = df["efficiency"]
-    return train_test_split(X, y, test_size=test_size, random_state=random_state)
-
-
 def evaluate_model(model: Any, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
+    """Evaluate model performance on test set."""
     preds = model.predict(X_test)
     mse = mean_squared_error(y_test, preds)
     return {
