@@ -3,7 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from sklearn.linear_model import LinearRegression
-from src.training.training_utils import evaluate_model, load_dataset, save_model, split_dataset
+from src.evaluation.evaluate_models import evaluate_model
+from src.training.training_utils import load_dataset, save_model, split_dataset
 
 MODEL_PATH = Path("models/linear_regression_v1.joblib")
 
