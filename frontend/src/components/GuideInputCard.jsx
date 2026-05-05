@@ -15,7 +15,7 @@ export default function GuideInputCard({
     <section className="card">
       <h2>Guide input</h2>
       <p className="muted">
-        Enter a 20-nt guide (A/T/G/C).
+        Enter a 20 nucleotide gRNA sequence (A / T / G / C).
       </p>
 
       <label className="label">20-nt gRNA sequence</label>
@@ -24,7 +24,7 @@ export default function GuideInputCard({
           className="input"
           value={sequence}
           onChange={(e) => setSequence(e.target.value)}
-          placeholder="e.g., ATGCGTAGCTAAGCTAGCAC"
+          placeholder="e.g ATGCGTAGCTAAGCTAGCAC"
           spellCheck="false"
           autoCapitalize="characters"
         />
