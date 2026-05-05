@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 from typing import Any
 
@@ -49,24 +50,48 @@ def load_model(path: Path) -> Any:
     return joblib.load(path)
 
 
-def evaluate_all() -> pd.DataFrame:
-    df = load_dataset()
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Evaluate saved models against a processed feature dataset")
+    parser.add_argument(
+        "--data-path",
+        default=DATA_PATH,
+        help="Path to the processed feature dataset",
+    )
+    parser.add_argument(
+        "--model-paths",
+        nargs="+",
+        default=[str(path) for path in MODEL_PATHS.values()],
+        help="List of model paths to evaluate",
+    )
+    parser.add_argument(
+        "--output-path",
+        default=RESULTS_PATH,
+        help="CSV path for saving evaluation results",
+    )
+    return parser.parse_args()
+
+
+def evaluate_all(model_paths: list[str], data_path: Path = DATA_PATH, output_path: Path = RESULTS_PATH) -> pd.DataFrame:
+    df = load_dataset(data_path)
     _, X_test, _, y_test = split_dataset(df)
 
     rows = []
-    for model_name, model_path in MODEL_PATHS.items():
-        model = load_model(model_path)
+    for model_path in model_paths:
+        model = load_model(Path(model_path))
         metrics = evaluate_model(model, X_test, y_test)
-        rows.append({"model": model_name, **metrics})
+        rows.append({"model": Path(model_path).stem, **metrics})
 
     df_results = pd.DataFrame(rows).sort_values("rmse").reset_index(drop=True)
-    df_results.to_csv(RESULTS_PATH, index=False)
-    print(f"Saved evaluation results to: {RESULTS_PATH}")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    df_results.to_csv(output_path, index=False)
+    print(f"Saved evaluation results to: {output_path}")
     return df_results
 
 
 def main() -> None:
-    results = evaluate_all()
+    args = parse_args()
+    model_paths = args.model_paths
+    results = evaluate_all(model_paths, Path(args.data_path), Path(args.output_path))
     print("\nEvaluation complete. Results:")
     print(results.to_string(index=False))
 
