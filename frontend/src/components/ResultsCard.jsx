@@ -14,8 +14,9 @@ export default function ResultsCard({ result, history, fallbackGc }) {
         <>
           <div className="resultHero">
             <div>
-              <div className="k">Predicted efficiency</div>
-              <div className="big">{result.prediction.toFixed(4)}</div>
+              <div className="k">Efficiency band</div>
+              <div className="big">{result.band.label}</div>
+              <div className="mutedSmall">Score: {result.prediction.toFixed(4)}</div>
             </div>
             <span
               className={`pill ${
@@ -46,13 +47,13 @@ export default function ResultsCard({ result, history, fallbackGc }) {
           <div className="table">
             <div className="thead">
               <span>Sequence</span>
-              <span>GC</span>
+              <span>Band</span>
               <span>Score</span>
             </div>
             {history.map((h) => (
               <div className="trow" key={h.ts}>
                 <code className="seq">{h.sequence}</code>
-                <span>{(h.features?.gc_content ?? 0).toFixed(2)}</span>
+                <span>{h.band.label}</span>
                 <span className="score">{h.prediction.toFixed(4)}</span>
               </div>
             ))}
